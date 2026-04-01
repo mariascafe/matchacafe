@@ -1,9 +1,338 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Test Page</title>
+<title>Matcha Study Cafe</title>
+
+<style>
+
+body{
+font-family: Arial, sans-serif;
+margin:0;
+background:#f3f7f1;
+color:#2d3a2d;
+}
+
+header{
+text-align:center;
+padding:30px;
+background:#dce8d4;
+font-size:28px;
+}
+
+.container{
+max-width:800px;
+margin:auto;
+padding:20px;
+}
+
+.card{
+background:white;
+padding:20px;
+margin:15px 0;
+border-radius:12px;
+box-shadow:0 2px 8px rgba(0,0,0,0.05);
+}
+
+button{
+background:#dce8d4;
+border:none;
+padding:8px 12px;
+border-radius:8px;
+cursor:pointer;
+margin-top:5px;
+}
+
+.timer{
+font-size:32px;
+text-align:center;
+}
+
+.progress{
+height:15px;
+background:#e8efe3;
+border-radius:20px;
+margin-top:8px;
+}
+
+.bar{
+height:15px;
+background:#a7c4a0;
+width:0%;
+border-radius:20px;
+}
+
+.hidden{
+display:none;
+}
+
+</style>
+
 </head>
+
 <body>
-<h1>Hello World</h1>
+
+<header>
+🍵 Matcha Study Cafe
+</header>
+
+<div class="container">
+
+<!-- login -->
+
+<div class="card" id="login">
+<h2>Login</h2>
+
+<input id="name" placeholder="username">
+
+<button onclick="login()">
+enter
+</button>
+
+</div>
+
+<!-- main -->
+
+<div id="main" class="hidden">
+
+<!-- timer -->
+
+<div class="card">
+
+<h2>Study timer</h2>
+
+<div class="timer" id="time">
+25:00
+</div>
+
+<button onclick="startTimer()">
+start
+</button>
+
+<button onclick="resetTimer()">
+reset
+</button>
+
+</div>
+
+<!-- streak -->
+
+<div class="card">
+
+<h2>Study streak 🔥</h2>
+
+<p id="streak">
+0 days
+</p>
+
+<button onclick="addStreak()">
+studied today
+</button>
+
+</div>
+
+<!-- checklist -->
+
+<div class="card">
+
+<h2>Revision checklist</h2>
+
+<input id="task">
+
+<button onclick="addTask()">
+add
+</button>
+
+<ul id="list">
+
+</ul>
+
+<div class="progress">
+
+<div class="bar" id="bar">
+
+</div>
+
+</div>
+
+<p id="percent">
+0%
+</p>
+
+</div>
+
+<!-- subjects -->
+
+<div class="card">
+
+<h2>Subjects</h2>
+
+<p>Maths</p>
+<p>English</p>
+<p>Biology</p>
+<p>Chemistry</p>
+<p>Physics</p>
+<p>History</p>
+<p>Business</p>
+<p>Religious studies</p>
+
+</div>
+
+</div>
+
+</div>
+
+
+<script>
+
+/* login */
+
+function login(){
+
+let name =
+document.getElementById("name").value;
+
+if(name=="") return;
+
+localStorage.setItem("user",name);
+
+document.getElementById("login").classList.add("hidden");
+
+document.getElementById("main").classList.remove("hidden");
+
+}
+
+if(localStorage.getItem("user")){
+
+document.getElementById("login").classList.add("hidden");
+
+document.getElementById("main").classList.remove("hidden");
+
+}
+
+
+/* timer */
+
+let time = 1500;
+let running=false;
+
+function startTimer(){
+
+if(running) return;
+
+running=true;
+
+let interval = setInterval(function(){
+
+let m=Math.floor(time/60);
+
+let s=time%60;
+
+document.getElementById("time").innerHTML =
+m + ":" + (s<10?"0":"") + s;
+
+time--;
+
+if(time<0){
+
+clearInterval(interval);
+
+running=false;
+
+}
+
+},1000);
+
+}
+
+function resetTimer(){
+
+time=1500;
+
+running=false;
+
+document.getElementById("time").innerHTML="25:00";
+
+}
+
+
+/* streak */
+
+let streak =
+localStorage.getItem("streak") || 0;
+
+document.getElementById("streak").innerHTML =
+streak + " days";
+
+function addStreak(){
+
+streak++;
+
+localStorage.setItem("streak",streak);
+
+document.getElementById("streak").innerHTML =
+streak + " days";
+
+}
+
+
+/* checklist progress */
+
+let total=0;
+
+let done=0;
+
+function addTask(){
+
+let text =
+document.getElementById("task").value;
+
+if(text=="") return;
+
+let li=document.createElement("li");
+
+let box=document.createElement("input");
+
+box.type="checkbox";
+
+box.onclick=function(){
+
+if(this.checked) done++;
+else done--;
+
+updateProgress();
+
+};
+
+li.appendChild(box);
+
+li.append(" " + text);
+
+document.getElementById("list").appendChild(li);
+
+total++;
+
+updateProgress();
+
+}
+
+function updateProgress(){
+
+let percent =
+
+total==0 ? 0 :
+
+Math.round(done/total*100);
+
+document.getElementById("bar").style.width =
+percent + "%";
+
+document.getElementById("percent").innerHTML =
+percent + "% complete";
+
+}
+
+</script>
+
 </body>
+
 </html>
